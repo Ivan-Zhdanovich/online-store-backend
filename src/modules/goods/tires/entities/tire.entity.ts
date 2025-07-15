@@ -17,5 +17,5 @@ export class Tire {
   manufacturer: string;
 
   @Column()
-  radius: number;
+  radius: string;
 }

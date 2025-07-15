@@ -26,4 +26,23 @@ export class TiresService {
     }
     return user;
   }
+
+  async update(id: number, updateData: Partial<Tire>): Promise<Tire> {
+    const tire = await this.findOneById(id);
+    Object.assign(tire, updateData);
+    return this.tiresRepository.save(tire);
+  }
+
+  async remove(id: number): Promise<void> {
+    const tire = await this.findOneById(id);
+    await this.tiresRepository.remove(tire);
+  }
+
+  async softRemove(id: number): Promise<void> {
+    await this.tiresRepository.softDelete(id);
+  }
+
+  async restore(id: number): Promise<void> {
+    await this.tiresRepository.restore(id);
+  }
 }
