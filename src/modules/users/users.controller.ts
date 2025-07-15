@@ -11,12 +11,16 @@ import {
   Patch,
   Post,
   Put,
-  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDTO } from './dto/create-user/create-user-dto';
 import { UserDTO } from './dto/user/user-dto';
 import { UpdatePropertiesUserDTO } from './dto/update-properties-user/updateUserPropertiesDto';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/guards/role.decorator';
+import { Role } from 'src/enums/role.enum';
 
 @Controller('users')
 export class UsersController {
@@ -36,19 +40,15 @@ export class UsersController {
       }
     }
   }
-
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.Admin)
   @Get()
   getUsers(): Promise<UserDTO[]> {
     return this.usersService.findAll();
   }
 
   @Get(':id')
-  findOne(
-    @Param('id', ParseIntPipe) id: number,
-    @Req() req: Request,
-  ): Promise<UserDTO> {
-    console.log(`REQUEST ID ${req?.headers['x-request-id']}`);
-    console.log(`LOCALE IS ${req['locale']}`);
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<UserDTO> {
     return this.usersService.findOneById(id);
   }
 
