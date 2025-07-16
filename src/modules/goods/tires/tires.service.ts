@@ -20,11 +20,11 @@ export class TiresService {
   }
 
   async findOneById(id: number): Promise<Tire> {
-    const user = await this.tiresRepository.findOneBy({ id });
-    if (!user) {
+    const tire = await this.tiresRepository.findOneBy({ id });
+    if (!tire) {
       throw new NotFoundException(`Tire with id ${id} not found`);
     }
-    return user;
+    return tire;
   }
 
   async update(id: number, updateData: Partial<Tire>): Promise<Tire> {
