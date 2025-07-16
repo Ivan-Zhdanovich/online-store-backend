@@ -5,6 +5,10 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CartController } from './modules/cart/cart.controller';
+import { CartModule } from './modules/cart/cart.module';
+import { OrderController } from './modules/orders/orders.controller';
+import { OrderModule } from './modules/orders/orders.module';
 
 @Module({
   imports: [
@@ -27,8 +31,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     UsersModule,
     AuthModule,
+    CartModule,
+    OrderModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, CartController, OrderController],
   providers: [AppService],
 })
 export class AppModule {}
