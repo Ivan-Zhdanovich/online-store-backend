@@ -18,4 +18,7 @@ export class Tire {
 
   @Column()
   radius: string;
+
+  @Column()
+  price: number;
 }

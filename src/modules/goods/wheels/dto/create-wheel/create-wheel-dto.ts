@@ -1,15 +1,15 @@
 import { IsNotEmpty, IsNumber, IsString, MinLength } from 'class-validator';
 import { Goods } from 'src/enums/goods.enum';
-import { Tires } from 'src/enums/tires.enum';
+import { Wheels } from 'src/enums/wheels.enum';
 
-export class CreateTireDTO {
+export class CreateWheelDTO {
   @IsString()
   @IsNotEmpty()
-  category: Goods.Tires;
+  category: Goods.Wheels;
 
   @IsString()
   @IsNotEmpty()
-  subcategory: Tires;
+  subcategory: Wheels;
 
   @IsString()
   @IsNotEmpty()

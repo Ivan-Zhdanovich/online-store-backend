@@ -13,6 +13,12 @@ export class Wheel {
   @Column({ type: 'enum', enum: Wheels })
   subcategory: Wheels;
 
-  @Column({ unique: true })
-  name: string;
+  @Column()
+  manufacturer: string;
+
+  @Column()
+  radius: string;
+
+  @Column()
+  price: number;
 }

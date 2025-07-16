@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpException,
   Param,
   ParseIntPipe,
   Patch,
@@ -14,7 +13,7 @@ import {
 import { TiresService } from './tires.service';
 import { CreateTireDTO } from './dto/create-tire/create-tire-dto';
 import { TireDTO } from './dto/tire/tire-dto';
-import { UpdatePropertiesTireDTO } from './dto/update-properties-tire/update-properties-Dto';
+import { UpdatePropertiesTireDTO } from './dto/update-properties-tire/update-properties-dto';
 
 @Controller('tires')
 export class TiresController {
@@ -37,7 +36,7 @@ export class TiresController {
   }
 
   @Put(':id')
-  updateUser(
+  updateTire(
     @Body() tire: CreateTireDTO,
     @Param('id', ParseIntPipe) id: number,
   ): Promise<CreateTireDTO> {
@@ -45,7 +44,7 @@ export class TiresController {
   }
 
   @Patch(':id')
-  updateUserProperties(
+  updateTireProperties(
     @Param('id', ParseIntPipe) id: number,
     @Body() tireProperties: UpdatePropertiesTireDTO,
   ) {
