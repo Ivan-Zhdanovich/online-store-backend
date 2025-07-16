@@ -1,6 +1,7 @@
 import { Goods } from 'src/enums/goods.enum';
 import { Wheels } from 'src/enums/wheels.enum';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Cart } from 'src/modules/cart/entities/cart.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('Wheels')
 export class Wheel {
@@ -21,4 +22,7 @@ export class Wheel {
 
   @Column()
   price: number;
+
+  @ManyToOne(() => Cart, (cart) => cart.wheels)
+  cart: Cart;
 }
