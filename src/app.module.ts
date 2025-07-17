@@ -7,8 +7,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CartController } from './modules/cart/cart.controller';
 import { CartModule } from './modules/cart/cart.module';
-import { OrderController } from './modules/orders/orders.controller';
-import { OrderModule } from './modules/orders/orders.module';
+import { ProductsModule } from './modules/products/products.module';
+import { ProductsService } from './modules/products/products.service';
+import { OrdersModule } from './modules/orders/orders.module';
 
 @Module({
   imports: [
@@ -32,9 +33,10 @@ import { OrderModule } from './modules/orders/orders.module';
     UsersModule,
     AuthModule,
     CartModule,
-    OrderModule,
+    OrdersModule,
+    ProductsModule,
   ],
-  controllers: [AppController, CartController, OrderController],
-  providers: [AppService],
+  controllers: [AppController, CartController, AbortController],
+  providers: [AppService, ProductsService],
 })
 export class AppModule {}
