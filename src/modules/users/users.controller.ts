@@ -26,7 +26,7 @@ import { Role } from 'src/enums/role.enum';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @Post()
+  @Post('register')
   @HttpCode(201)
   async create(@Body() user: CreateUserDTO): Promise<UserDTO | void> {
     try {
@@ -42,17 +42,17 @@ export class UsersController {
   }
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.Admin)
-  @Get()
+  @Get('profile')
   getUsers(): Promise<UserDTO[]> {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
+  @Get('profile/:id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<UserDTO> {
     return this.usersService.findOneById(id);
   }
 
-  @Put(':id')
+  @Put('profile/:id')
   updateUser(
     @Body() user: CreateUserDTO,
     @Param('id', ParseIntPipe) id: number,
@@ -60,7 +60,7 @@ export class UsersController {
     return this.usersService.update(id, user);
   }
 
-  @Patch(':id')
+  @Patch('profile/:id')
   updateUserProperties(
     @Param('id', ParseIntPipe) id: number,
     @Body() userProperties: UpdatePropertiesUserDTO,
@@ -68,13 +68,13 @@ export class UsersController {
     return this.usersService.update(id, userProperties);
   }
 
-  @Delete(':id')
+  @Delete('profile/:id')
   @HttpCode(204)
   deleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
   }
 
-  @Delete('softDelete/:id')
+  @Delete('profile/softDelete/:id')
   @HttpCode(204)
   softDeleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.softRemove(id);
