@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -21,6 +23,7 @@ export class ProductsController {
   constructor(private readonly productService: ProductsService) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async createProduct(@Body() product: CreateProductDTO): Promise<Product> {
     return await this.productService.createProduct(product);
   }
@@ -49,6 +52,7 @@ export class ProductsController {
   }
 
   @Post('categories')
+  @HttpCode(201)
   async createCategory(@Body() category: CreateCategoryDTO): Promise<Category> {
     return await this.productService.createCategory(category);
   }
