@@ -4,6 +4,7 @@ import { Product } from './entities/product.entity';
 import { Category } from './entities/category.entity';
 import { ProductsRepository } from './repositories/products.repositories';
 import { CategoriesRepository } from './repositories/categories.repository';
+import { CreateProductDTO } from './dto/create-product/create-product-dto';
 
 @Injectable()
 export class ProductsService {
@@ -14,11 +15,17 @@ export class ProductsService {
     private readonly categoriesRepository: CategoriesRepository,
   ) {}
 
-  async createProduct(productData: Partial<Product>): Promise<Product> {
-    if (productData.category) {
-      const category = await this.categoriesRepository.findOneBy(
-        productData.category,
-      );
+  async findCategoryById(id: number): Promise<Category> {
+    const category = await this.categoriesRepository.findOneBy({ id });
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+    return category;
+  }
+
+  async createProduct(productData: CreateProductDTO): Promise<Product> {
+    if (productData.categoryId) {
+      const category = await this.findCategoryById(productData.categoryId);
       if (!category) {
         throw new NotFoundException('Category not found');
       }
@@ -60,14 +67,6 @@ export class ProductsService {
 
   async findAllCategories(): Promise<Category[]> {
     return this.categoriesRepository.find({ relations: ['products'] });
-  }
-
-  async findCategoryById(id: number): Promise<Category> {
-    const category = await this.categoriesRepository.findOneBy({ id });
-    if (!category) {
-      throw new NotFoundException('Category not found');
-    }
-    return category;
   }
 
   async updateCategory(
