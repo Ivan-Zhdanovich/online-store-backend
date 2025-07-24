@@ -1,15 +1,15 @@
-import { Tire } from 'src/modules/goods/tires/entities/tire.entity';
-import { Wheel } from 'src/modules/goods/wheels/entities/wheel.entity';
-import { Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/modules/users/entities/user.entity';
+import { Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { CartItem } from './cartItem.entity';
 
 @Entity('Cart')
 export class Cart {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => Tire, (tire) => tire.cart)
-  tires: Tire[];
+  @ManyToOne(() => User, (user) => user.carts)
+  user: User;
 
-  @OneToMany(() => Wheel, (wheel) => wheel.cart)
-  wheels: Wheel[];
+  @OneToMany(() => CartItem, (cartItem) => cartItem.cart, { cascade: true })
+  items: CartItem[];
 }
