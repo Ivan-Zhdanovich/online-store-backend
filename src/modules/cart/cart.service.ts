@@ -17,7 +17,7 @@ export class CartService {
     @InjectRepository(CartItem)
     private readonly cartItemRepository: CartItemRepository,
     private readonly usersService: UsersService,
-    private readonly productService: ProductsService,
+    private readonly productsService: ProductsService,
   ) {}
 
   async findOrCreateCart(userId: number): Promise<Cart> {
@@ -39,7 +39,7 @@ export class CartService {
   ): Promise<Cart> {
     const cart = await this.findOrCreateCart(userId);
     const { productId, quantity } = createCartData;
-    const product = await this.productService.findProductById(productId);
+    const product = await this.productsService.findProductById(productId);
     let cartItem = cart.items.find((item) => item.product.id === productId);
     if (cartItem) {
       cartItem.quantity += quantity;

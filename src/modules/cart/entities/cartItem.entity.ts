@@ -1,7 +1,8 @@
-import { Column, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 import { Cart } from './cart.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 
+@Entity('CartItem')
 export class CartItem {
   @PrimaryColumn()
   id: number;

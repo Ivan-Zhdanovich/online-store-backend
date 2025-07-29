@@ -36,7 +36,7 @@ import { OrdersModule } from './modules/orders/orders.module';
     OrdersModule,
     ProductsModule,
   ],
-  controllers: [AppController, CartController, AbortController],
-  providers: [AppService, ProductsService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
