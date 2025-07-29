@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { OrdersRepository } from './repositories/orders.repository';
 import { Order } from './entities/order.entity';
 import { OrderItem } from './entities/orderItem.entity';
-import { OrderItemRepository } from './repositories/orderItem.repository';
+import { OrderItemsRepository } from './repositories/orderItem.repository';
 import { CreateOrderDTO } from './dto/create-order/create-order-dto';
 import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
@@ -16,7 +16,7 @@ export class OrdersService {
     @InjectRepository(Order)
     private readonly ordersRepository: OrdersRepository,
     @InjectRepository(OrderItem)
-    private readonly orderItemRepository: OrderItemRepository,
+    private readonly orderItemRepository: OrderItemsRepository,
     private readonly usersService: UsersService,
     private readonly productsService: ProductsService,
   ) {}
