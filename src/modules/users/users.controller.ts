@@ -20,7 +20,7 @@ import { UpdatePropertiesUserDTO } from './dto/update-properties-user/update-use
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/guards/role.decorator';
-import { Role } from 'src/enums/role.enum';
+import { RoleEnum } from 'src/enums/role.enum';
 
 @Controller('users')
 export class UsersController {
@@ -41,8 +41,8 @@ export class UsersController {
     }
   }
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin)
-  @Get('profile')
+  @Roles(RoleEnum.ADMIN)
+  @Get('profileAll')
   getUsers(): Promise<UserDTO[]> {
     return this.usersService.findAll();
   }
