@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UsersRepository } from './repositories/users.repository';
 import { User } from './entities/user.entity';
-import { Role } from 'src/enums/role.enum';
+import { RoleEnum } from 'src/enums/role.enum';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -12,16 +11,7 @@ export class UsersService {
     private readonly usersRepository: UsersRepository,
   ) {}
 
-  async hashedPassword(password: string): Promise<string> {
-    const saltOrRounds = 10;
-    const hashedPassword = bcrypt.hash(password, saltOrRounds);
-    return hashedPassword;
-  }
-
   async create(userData: Partial<User>): Promise<User> {
-    if (userData.password === null) {
-      userData.password = await this.hashedPassword(userData.password);
-    }
     const user = this.usersRepository.create(userData);
     return this.usersRepository.save(user);
   }
@@ -65,7 +55,7 @@ export class UsersService {
     await this.usersRepository.restore(id);
   }
 
-  async updateUserRole(id: number, newRole: Role): Promise<User> {
+  async updateUserRole(id: number, newRole: RoleEnum): Promise<User> {
     const user = await this.findOneById(id);
     user.role = newRole;
     return this.usersRepository.save(user);

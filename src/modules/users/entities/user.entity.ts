@@ -1,4 +1,4 @@
-import { Role } from 'src/enums/role.enum';
+import { RoleEnum } from 'src/enums/role.enum';
 import { Cart } from 'src/modules/cart/entities/cart.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
@@ -16,10 +16,10 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: Role,
-    default: 'user',
+    enum: RoleEnum,
+    default: RoleEnum.USER,
   })
-  role: Role;
+  role: RoleEnum;
 
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
