@@ -35,12 +35,16 @@ import { User } from './entities/user.entity';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN)
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
   @ApiBody({ type: CreateUserDTO })
   @ApiCreatedResponse({
     description: 'The user has been successfully registered',
   })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() user: CreateUserDTO): Promise<User | void> {
     try {
@@ -59,13 +63,22 @@ export class UsersController {
   @Roles(RoleEnum.ADMIN)
   @Get('profileAll')
   @ApiOperation({ summary: 'Get all users profiles' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: User,
+    isArray: true,
+  })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })
   getUsers(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
   @Get('profile/:id')
   @ApiOperation({ summary: 'Get a user profile by ID' })
-  @ApiParam({ name: 'id', description: 'User ID' })
+  @ApiParam({ name: 'id', required: true, description: 'User ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Success', type: User })
   findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.usersService.findOneById(id);
   }
@@ -94,12 +107,15 @@ export class UsersController {
     return this.usersService.update(id, userProperties);
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN)
   @Delete('profile/:id')
   @ApiOperation({ summary: 'Delete a user with specified ID' })
   @ApiParam({ name: 'id', required: true, description: 'User identifier' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Success' })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
-  @HttpCode(204)
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })
+  @HttpCode(HttpStatus.NO_CONTENT)
   deleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
   }
@@ -109,7 +125,7 @@ export class UsersController {
   @ApiParam({ name: 'id', required: true, description: 'User identifier' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Success' })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   softDeleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.softRemove(id);
   }
