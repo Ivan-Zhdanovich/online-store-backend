@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Product } from './product.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Subcategory } from './subcategory.entity';
 
 @Entity('Categories')
 export class Category {
@@ -14,4 +15,7 @@ export class Category {
 
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
+
+  @OneToMany(() => Subcategory, (subcategory) => subcategory.category)
+  subcategories: Subcategory[];
 }

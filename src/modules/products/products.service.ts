@@ -5,6 +5,8 @@ import { Category } from './entities/category.entity';
 import { ProductsRepository } from './repositories/products.repositories';
 import { CategoriesRepository } from './repositories/categories.repository';
 import { CreateProductDTO } from './dto/create-product/create-product-dto';
+import { Subcategory } from './entities/subcategory.entity';
+import { SubcategoriesRepository } from './repositories/subcategory.entity';
 
 @Injectable()
 export class ProductsService {
@@ -13,6 +15,8 @@ export class ProductsService {
     private readonly productsRepository: ProductsRepository,
     @InjectRepository(Category)
     private readonly categoriesRepository: CategoriesRepository,
+    @InjectRepository(Subcategory)
+    private readonly subcategoriesRepository: SubcategoriesRepository,
   ) {}
 
   async findCategoryById(id: number): Promise<Category> {
@@ -81,5 +85,38 @@ export class ProductsService {
   async removeCategory(id: number): Promise<void> {
     const category = await this.findCategoryById(id);
     await this.categoriesRepository.remove(category);
+  }
+
+  async findSubcategoryById(id: number): Promise<Subcategory> {
+    const subcategory = await this.subcategoriesRepository.findOneBy({ id });
+    if (!subcategory) {
+      throw new NotFoundException('Subcategory not found');
+    }
+    return subcategory;
+  }
+
+  async findAllSubcategories(): Promise<Subcategory[]> {
+    return this.subcategoriesRepository.find({ relations: ['category'] });
+  }
+
+  async createSubcategory(
+    subcategoryData: Partial<Subcategory>,
+  ): Promise<Subcategory> {
+    const subcategory = this.subcategoriesRepository.create(subcategoryData);
+    return this.subcategoriesRepository.save(subcategory);
+  }
+
+  async updateSubcategory(
+    id: number,
+    updateData: Partial<Subcategory>,
+  ): Promise<Subcategory> {
+    const subcategory = await this.findSubcategoryById(id);
+    Object.assign(subcategory, updateData);
+    return this.subcategoriesRepository.save(subcategory);
+  }
+
+  async removeSubcategory(id: number): Promise<void> {
+    const subcategory = await this.findSubcategoryById(id);
+    await this.subcategoriesRepository.remove(subcategory);
   }
 }

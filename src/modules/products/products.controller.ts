@@ -29,10 +29,12 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/guards/role.decorator';
 import { RoleEnum } from 'src/enums/role.enum';
+import { CreateSubcategoryDTO } from './dto/create-subcategory/create-subcategory-dto';
+import { Subcategory } from './entities/subcategory.entity';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new product' })
@@ -42,7 +44,7 @@ export class ProductsController {
   })
   @HttpCode(HttpStatus.CREATED)
   async createProduct(@Body() product: CreateProductDTO): Promise<Product> {
-    return await this.productService.createProduct(product);
+    return await this.productsService.createProduct(product);
   }
 
   @Get()
@@ -55,7 +57,7 @@ export class ProductsController {
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
   findAllProducts() {
-    return this.productService.findAllProducts();
+    return this.productsService.findAllProducts();
   }
 
   @Get(':id')
@@ -63,7 +65,7 @@ export class ProductsController {
   @ApiParam({ name: 'id', required: true, description: 'Product ID' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Success', type: Product })
   findProductById(@Param('id', ParseIntPipe) id: number) {
-    return this.productService.findProductById(id);
+    return this.productsService.findProductById(id);
   }
 
   @Patch()
@@ -75,7 +77,7 @@ export class ProductsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() product: UpdateProductDTO,
   ) {
-    return this.productService.updateProduct(id, product);
+    return this.productsService.updateProduct(id, product);
   }
 
   @Delete()
@@ -85,7 +87,7 @@ export class ProductsController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
   @HttpCode(HttpStatus.NO_CONTENT)
   removeProduct(@Param('id', ParseIntPipe) id: number) {
-    return this.productService.removeProduct(id);
+    return this.productsService.removeProduct(id);
   }
 
   @Post('categories')
@@ -96,7 +98,7 @@ export class ProductsController {
   })
   @HttpCode(HttpStatus.CREATED)
   async createCategory(@Body() category: CreateCategoryDTO): Promise<Category> {
-    return await this.productService.createCategory(category);
+    return await this.productsService.createCategory(category);
   }
 
   @Get('categories')
@@ -109,7 +111,7 @@ export class ProductsController {
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
   findAllCategories() {
-    return this.productService.findAllCategories();
+    return this.productsService.findAllCategories();
   }
 
   @Get('categories/:id')
@@ -121,7 +123,7 @@ export class ProductsController {
     type: Category,
   })
   findCategoryById(@Param('id', ParseIntPipe) id: number) {
-    return this.productService.findCategoryById(id);
+    return this.productsService.findCategoryById(id);
   }
 
   @Patch('categories/:id')
@@ -137,12 +139,12 @@ export class ProductsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() category: UpdateCategoryDTO,
   ) {
-    return this.productService.updateCategory(id, category);
+    return this.productsService.updateCategory(id, category);
   }
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.ADMIN)
-  @Delete()
+  @Delete('categories')
   @ApiOperation({ summary: 'Delete a category with specified ID' })
   @ApiParam({ name: 'id', required: true, description: 'Category identifier' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Success' })
@@ -150,6 +152,62 @@ export class ProductsController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })
   @HttpCode(HttpStatus.NO_CONTENT)
   removeCategory(@Param('id', ParseIntPipe) id: number) {
-    return this.productService.removeCategory(id);
+    return this.productsService.removeCategory(id);
+  }
+
+  @Post('subcategories')
+  @ApiOperation({ summary: 'Create a new subcategory' })
+  @ApiBody({ type: CreateSubcategoryDTO })
+  @ApiCreatedResponse({
+    description: 'The subcategory has been successfully created',
+    type: Subcategory,
+  })
+  @HttpCode(HttpStatus.CREATED)
+  async createSubcategory(
+    @Body() subcategory: CreateSubcategoryDTO,
+  ): Promise<Subcategory> {
+    return await this.productsService.createSubcategory(subcategory);
+  }
+
+  @Get('subcategories')
+  @ApiOperation({ summary: 'Get all subcategories' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: Subcategory,
+    isArray: true,
+  })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
+  findAllSubcategories() {
+    return this.productsService.findAllSubcategories();
+  }
+
+  @Get('subcategories/:id')
+  @ApiOperation({ summary: 'Get a subcategory by ID' })
+  @ApiParam({ name: 'id', required: true, description: 'Subcategory ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: Subcategory,
+  })
+  findSubcategoryById(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.findSubcategoryById(id);
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN)
+  @Delete('subcategories')
+  @ApiOperation({ summary: 'Delete a subcategory with specified ID' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Subcategory identifier',
+  })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Success' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeSubcategory(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.removeSubcategory(id);
   }
 }

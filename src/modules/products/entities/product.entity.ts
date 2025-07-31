@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Category } from './category.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Subcategory } from './subcategory.entity';
 
 @Entity('Products')
 export class Product {
@@ -26,4 +27,7 @@ export class Product {
 
   @ManyToOne(() => Category, (category) => category.products)
   category: Category;
+
+  @ManyToOne(() => Subcategory, (subcategory) => subcategory.products)
+  subcategory: Subcategory;
 }
