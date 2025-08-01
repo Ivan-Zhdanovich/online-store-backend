@@ -10,7 +10,7 @@ export class Category {
   id: number;
 
   @Column()
-  @ApiProperty({ description: 'Category name', example: 'passenger' })
+  @ApiProperty({ description: 'Category name', example: 'Tires' })
   name: string;
 
   @OneToMany(() => Product, (product) => product.category)

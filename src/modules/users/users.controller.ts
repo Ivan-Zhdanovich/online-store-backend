@@ -43,7 +43,10 @@ export class UsersController {
   @ApiCreatedResponse({
     description: 'The user has been successfully registered',
   })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description: 'The user with this email already exists',
+  })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() user: CreateUserDTO): Promise<User | void> {
@@ -52,7 +55,7 @@ export class UsersController {
     } catch (error) {
       if (error) {
         throw new HttpException(
-          'user with this email already exists',
+          'The user with this email already exists',
           HttpStatus.CONFLICT,
         );
       }
@@ -61,7 +64,7 @@ export class UsersController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.ADMIN)
-  @Get('profileAll')
+  @Get('profiles')
   @ApiOperation({ summary: 'Get all users profiles' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -69,7 +72,6 @@ export class UsersController {
     type: User,
     isArray: true,
   })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })
   getUsers(): Promise<User[]> {
     return this.usersService.findAll();
@@ -79,6 +81,10 @@ export class UsersController {
   @ApiOperation({ summary: 'Get a user profile by ID' })
   @ApiParam({ name: 'id', required: true, description: 'User ID' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Success', type: User })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'The user not found',
+  })
   findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.usersService.findOneById(id);
   }
@@ -86,8 +92,11 @@ export class UsersController {
   @Put('profile/:id')
   @ApiOperation({ summary: 'Updates a user with specified ID' })
   @ApiParam({ name: 'id', required: true, description: 'User identifier' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Success' })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Success', type: User })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'The user not found',
+  })
   updateUser(
     @Body() user: CreateUserDTO,
     @Param('id', ParseIntPipe) id: number,
@@ -98,8 +107,11 @@ export class UsersController {
   @Patch('profile/:id')
   @ApiOperation({ summary: 'Updates properties of user with  specified ID' })
   @ApiParam({ name: 'id', required: true, description: 'User identifier' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Success' })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Success', type: User })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'The user not found',
+  })
   updateUserProperties(
     @Param('id', ParseIntPipe) id: number,
     @Body() userProperties: UpdatePropertiesUserDTO,
@@ -112,21 +124,10 @@ export class UsersController {
   @Delete('profile/:id')
   @ApiOperation({ summary: 'Delete a user with specified ID' })
   @ApiParam({ name: 'id', required: true, description: 'User identifier' })
-  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Success' })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Not found' })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
-  }
-
-  @Delete('profile/softDelete/:id')
-  @ApiOperation({ summary: 'Delete a user with specified ID' })
-  @ApiParam({ name: 'id', required: true, description: 'User identifier' })
-  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Success' })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
-  @HttpCode(HttpStatus.NO_CONTENT)
-  softDeleteUser(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.softRemove(id);
   }
 }

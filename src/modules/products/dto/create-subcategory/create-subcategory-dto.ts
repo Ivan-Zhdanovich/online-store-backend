@@ -6,4 +6,9 @@ export class CreateSubcategoryDTO {
   @IsString()
   @ApiProperty({ description: 'Subcategory name', example: 'winter' })
   name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({ description: 'Category ID', example: 2 })
+  categoryId: string;
 }
