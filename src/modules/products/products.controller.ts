@@ -95,6 +95,7 @@ export class ProductsController {
   @ApiBody({ type: CreateCategoryDTO })
   @ApiCreatedResponse({
     description: 'The category has been successfully created',
+    type: Category,
   })
   @HttpCode(HttpStatus.CREATED)
   async createCategory(@Body() category: CreateCategoryDTO): Promise<Category> {

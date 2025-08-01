@@ -12,11 +12,12 @@ export class AuthService {
 
   async signIn(signInData: SignInDTO): Promise<{ access_token: string }> {
     const user = await this.usersService.findOneByEmail(signInData.email);
-
     const isPasswordValid = signInData.password === user.password;
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Wrong password.');
+      throw new UnauthorizedException(
+        "The user's email address or password is incorrect",
+      );
     }
 
     const payload = {

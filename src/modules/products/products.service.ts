@@ -20,7 +20,11 @@ export class ProductsService {
   ) {}
 
   async findCategoryById(id: number): Promise<Category> {
-    const category = await this.categoriesRepository.findOneBy({ id });
+    const category = await this.categoriesRepository.findOne({
+      where: { id: id },
+      relations: ['products'],
+    });
+
     if (!category) {
       throw new NotFoundException('Category not found');
     }
@@ -39,11 +43,16 @@ export class ProductsService {
   }
 
   async findAllProducts(): Promise<Product[]> {
-    return this.productsRepository.find({ relations: ['category'] });
+    return this.productsRepository.find({
+      relations: ['category', 'subcategory'],
+    });
   }
 
   async findProductById(id: number): Promise<Product> {
-    const product = await this.productsRepository.findOneBy({ id });
+    const product = await this.productsRepository.findOne({
+      where: { id: id },
+      relations: ['category', 'subcategory'],
+    });
     if (!product) {
       throw new NotFoundException('Product not found');
     }
@@ -88,7 +97,11 @@ export class ProductsService {
   }
 
   async findSubcategoryById(id: number): Promise<Subcategory> {
-    const subcategory = await this.subcategoriesRepository.findOneBy({ id });
+    const subcategory = await this.subcategoriesRepository.findOne({
+      where: { id: id },
+      relations: ['category'],
+    });
+
     if (!subcategory) {
       throw new NotFoundException('Subcategory not found');
     }
