@@ -31,6 +31,7 @@ import { Roles } from 'src/guards/role.decorator';
 import { RoleEnum } from 'src/enums/role.enum';
 import { CreateSubcategoryDTO } from './dto/create-subcategory/create-subcategory-dto';
 import { Subcategory } from './entities/subcategory.entity';
+import { UpdateSubcategoryDTO } from './dto/update-subcategory/update-subcategory-dto';
 
 @Controller('products')
 export class ProductsController {
@@ -68,7 +69,7 @@ export class ProductsController {
     return this.productsService.findProductById(id);
   }
 
-  @Patch()
+  @Patch(':id')
   @ApiOperation({ summary: 'Updates a product with specified id' })
   @ApiParam({ name: 'id', required: true, description: 'Product identifier' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Success', type: Product })
@@ -80,7 +81,7 @@ export class ProductsController {
     return this.productsService.updateProduct(id, product);
   }
 
-  @Delete()
+  @Delete(':id')
   @ApiOperation({ summary: 'Delete a product with specified ID' })
   @ApiParam({ name: 'id', required: true, description: 'Product identifier' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Success' })
@@ -102,7 +103,7 @@ export class ProductsController {
     return await this.productsService.createCategory(category);
   }
 
-  @Get('categories')
+  @Get('categories/all')
   @ApiOperation({ summary: 'Get all categories' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -145,7 +146,7 @@ export class ProductsController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.ADMIN)
-  @Delete('categories')
+  @Delete('categories/:id')
   @ApiOperation({ summary: 'Delete a category with specified ID' })
   @ApiParam({ name: 'id', required: true, description: 'Category identifier' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Success' })
@@ -170,7 +171,7 @@ export class ProductsController {
     return await this.productsService.createSubcategory(subcategory);
   }
 
-  @Get('subcategories')
+  @Get('subcategories/all')
   @ApiOperation({ summary: 'Get all subcategories' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -195,9 +196,31 @@ export class ProductsController {
     return this.productsService.findSubcategoryById(id);
   }
 
+  @Patch('subcategories/:id')
+  @ApiOperation({
+    summary: 'Updates properties of subcategory with specified ID',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Subcategory identifier',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: Category,
+  })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
+  updateSubcategory(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() subcategoryData: UpdateSubcategoryDTO,
+  ) {
+    return this.productsService.updateSubcategory(id, subcategoryData);
+  }
+
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.ADMIN)
-  @Delete('subcategories')
+  @Delete('subcategories/:id')
   @ApiOperation({ summary: 'Delete a subcategory with specified ID' })
   @ApiParam({
     name: 'id',
