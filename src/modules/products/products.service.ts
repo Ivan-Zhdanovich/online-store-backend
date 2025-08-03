@@ -7,6 +7,7 @@ import { CategoriesRepository } from './repositories/categories.repository';
 import { CreateProductDTO } from './dto/create-product/create-product-dto';
 import { Subcategory } from './entities/subcategory.entity';
 import { SubcategoriesRepository } from './repositories/subcategory.entity';
+import { UpdateSubcategoryDTO } from './dto/update-subcategory/update-subcategory-dto';
 
 @Injectable()
 export class ProductsService {
@@ -22,7 +23,7 @@ export class ProductsService {
   async findCategoryById(id: number): Promise<Category> {
     const category = await this.categoriesRepository.findOne({
       where: { id: id },
-      relations: ['products'],
+      relations: ['products', 'subcategories'],
     });
 
     if (!category) {
@@ -79,7 +80,9 @@ export class ProductsService {
   }
 
   async findAllCategories(): Promise<Category[]> {
-    return this.categoriesRepository.find({ relations: ['products'] });
+    return this.categoriesRepository.find({
+      relations: ['products', 'subcategories'],
+    });
   }
 
   async updateCategory(
@@ -115,13 +118,20 @@ export class ProductsService {
   async createSubcategory(
     subcategoryData: Partial<Subcategory>,
   ): Promise<Subcategory> {
+    const { categoryId } = subcategoryData;
+    const category = await this.categoriesRepository.findOne({
+      where: { id: categoryId },
+    });
+    if (!category) {
+      throw new NotFoundException(`Category with ID ${categoryId} not found`);
+    }
     const subcategory = this.subcategoriesRepository.create(subcategoryData);
     return this.subcategoriesRepository.save(subcategory);
   }
 
   async updateSubcategory(
     id: number,
-    updateData: Partial<Subcategory>,
+    updateData: UpdateSubcategoryDTO,
   ): Promise<Subcategory> {
     const subcategory = await this.findSubcategoryById(id);
     Object.assign(subcategory, updateData);
