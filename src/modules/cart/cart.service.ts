@@ -4,10 +4,10 @@ import { Cart } from './entities/cart.entity';
 import { CartRepository } from './repositories/cart.repository';
 import { CartItem } from './entities/cartItem.entity';
 import { CartItemRepository } from './repositories/cartItem.repository';
-import { UsersService } from '../users/users.service';
-import { ProductsService } from '../products/products.service';
 import { CreateCartItemDTO } from './dto/create-cartItem/create-cartItem-dto';
 import { UpdateCartItemDTO } from './dto/update-cartItem/update-cartItem-dto';
+import { Product } from '../products/entities/product.entity';
+import { ProductsRepository } from '../products/repositories/products.repositories';
 
 @Injectable()
 export class CartService {
@@ -16,40 +16,53 @@ export class CartService {
     private readonly cartRepository: CartRepository,
     @InjectRepository(CartItem)
     private readonly cartItemRepository: CartItemRepository,
-    private readonly usersService: UsersService,
-    private readonly productsService: ProductsService,
+    @InjectRepository(Product)
+    private readonly productsRepository: ProductsRepository,
   ) {}
 
   async findOrCreateCart(userId: number): Promise<Cart> {
     let cart = await this.cartRepository.findOne({
       where: { user: { id: userId } },
-      relations: ['items', 'items.product'],
+      relations: ['cartItems', 'cartItems.product'],
     });
     if (!cart) {
-      const user = await this.usersService.findOneById(userId);
-      cart = this.cartRepository.create({ user, items: [] });
-      cart = await this.cartRepository.save(cart);
+      cart = this.cartRepository.create({ user: { id: userId } });
+      await this.cartRepository.save(cart);
     }
     return cart;
   }
 
   async addItem(
     userId: number,
-    createCartData: CreateCartItemDTO,
+    createCartItemData: CreateCartItemDTO,
   ): Promise<Cart> {
+    const { productId, quantity } = createCartItemData;
     const cart = await this.findOrCreateCart(userId);
-    const { productId, quantity } = createCartData;
-    const product = await this.productsService.findProductById(productId);
-    let cartItem = cart.items.find((item) => item.product.id === productId);
-    if (cartItem) {
-      cartItem.quantity += quantity;
-    } else {
-      cartItem = this.cartItemRepository.create({ cart, product, quantity });
-      cart.items.push(cartItem);
+    const product = await this.productsRepository.findOne({
+      where: { id: productId },
+    });
+    if (!product) {
+      throw new NotFoundException('Product not found');
     }
 
-    await this.cartItemRepository.save(cartItem);
-    return this.cartRepository.save(cart);
+    const existingCartItem = cart.cartItems.find(
+      (cartItem) => cartItem.product.id === productId,
+    );
+
+    if (existingCartItem) {
+      existingCartItem.quantity += quantity;
+      await this.cartItemRepository.save(existingCartItem);
+    } else {
+      const newCartItem = this.cartItemRepository.create({
+        cart,
+        product,
+        quantity,
+      });
+      await this.cartItemRepository.save(newCartItem);
+      cart.cartItems.push(newCartItem);
+    }
+
+    return cart;
   }
 
   async updateItem(
@@ -58,7 +71,9 @@ export class CartService {
     updateCartData: UpdateCartItemDTO,
   ) {
     const cart = await this.findOrCreateCart(userId);
-    const cartItem = cart.items.find((item) => item.id === cartItemId);
+    const cartItem = cart.cartItems.find(
+      (cartItem) => cartItem.id === cartItemId,
+    );
     if (!cartItem) {
       throw new NotFoundException('Cart item not found');
     }
@@ -69,14 +84,14 @@ export class CartService {
   }
   async removeItem(userId: number, cartItemId: number): Promise<Cart> {
     const cart = await this.findOrCreateCart(userId);
-    const cartItemIndex = cart.items.findIndex(
-      (item) => item.id === cartItemId,
+    const cartItemIndex = cart.cartItems.findIndex(
+      (cartItem) => cartItem.id === cartItemId,
     );
     if (cartItemIndex === -1) {
       throw new NotFoundException('Cart item not found');
     }
 
-    const [cartItem] = cart.items.splice(cartItemIndex, 1);
+    const [cartItem] = cart.cartItems.splice(cartItemIndex, 1);
     await this.cartItemRepository.remove(cartItem);
     return this.cartRepository.save(cart);
   }
@@ -87,8 +102,8 @@ export class CartService {
 
   async clearCart(userId: number): Promise<void> {
     const cart = await this.findOrCreateCart(userId);
-    await this.cartItemRepository.remove(cart.items);
-    cart.items = [];
+    await this.cartItemRepository.remove(cart.cartItems);
+    cart.cartItems = [];
     await this.cartItemRepository.save(cart);
   }
 }

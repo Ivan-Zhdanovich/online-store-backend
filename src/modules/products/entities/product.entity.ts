@@ -1,7 +1,14 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Category } from './category.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Subcategory } from './subcategory.entity';
+import { CartItem } from 'src/modules/cart/entities/cartItem.entity';
 
 @Entity('Products')
 export class Product {
@@ -30,4 +37,7 @@ export class Product {
 
   @ManyToOne(() => Subcategory, (subcategory) => subcategory.products)
   subcategory: Subcategory;
+
+  @OneToMany(() => CartItem, (cartItem) => cartItem.product)
+  cartItems: CartItem[];
 }

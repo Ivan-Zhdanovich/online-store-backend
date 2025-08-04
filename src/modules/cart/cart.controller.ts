@@ -9,54 +9,55 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Req,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { CreateCartItemDTO } from './dto/create-cartItem/create-cartItem-dto';
 import { UpdateCartItemDTO } from './dto/update-cartItem/update-cartItem-dto';
-import { Request } from 'express';
+import { AuthGuard } from 'src/guards/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  @Post('add/:userId')
+  @Post('add')
   @HttpCode(HttpStatus.CREATED)
-  addItem(
-    @Param('userId', ParseIntPipe) userId: number,
-    @Body() createCartItemData: CreateCartItemDTO,
-  ) {
+  addItem(@Request() req, @Body() createCartItemData: CreateCartItemDTO) {
+    const userId: number = req.user.sub;
+    console.log(userId);
+
     return this.cartService.addItem(userId, createCartItemData);
   }
 
   @Patch('update/:itemId')
   updateItem(
-    @Req() req: Request,
+    @Request() req,
     @Param('itemId', ParseIntPipe) itemId: number,
     @Body() updateData: UpdateCartItemDTO,
   ) {
-    const userId: number = req.body.user.id;
+    const userId: number = req.user.sub;
     return this.cartService.updateItem(userId, itemId, updateData);
   }
 
   @Delete('remove/:itemId')
-  removeItem(
-    @Req() req: Request,
-    @Param('itemId', ParseIntPipe) itemId: number,
-  ) {
-    const userId: number = req.body.user.id;
+  removeItem(@Request() req, @Param('itemId', ParseIntPipe) itemId: number) {
+    const userId: number = req.user.sub;
     return this.cartService.removeItem(userId, itemId);
   }
 
   @Get('summary')
-  getCartSummary(@Req() req: Request) {
-    const userId: number = req.body.user.id;
+  getCartSummary(@Request() req) {
+    console.log(req);
+    const userId: number = req.user.sub;
+    console.log(`this id ${userId}`);
     return this.cartService.getCartSummary(userId);
   }
 
   @Post('checkout')
-  async checkout(@Req() req: Request) {
-    const userId: number = req.body.user.id;
+  async checkout(@Request() req) {
+    const userId: number = req.user.sub;
     await this.cartService.clearCart(userId);
     return { message: 'Checkout successful' };
   }
