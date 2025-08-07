@@ -45,7 +45,7 @@ export class CartService {
       throw new NotFoundException('Product not found');
     }
 
-    const existingCartItem = cart.cartItems.find(
+    const existingCartItem = cart.cartItems?.find(
       (cartItem) => cartItem.product.id === productId,
     );
 

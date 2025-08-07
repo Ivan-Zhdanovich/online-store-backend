@@ -37,7 +37,7 @@ export class UsersController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.ADMIN)
-  @Post('register')
+  @Post()
   @ApiOperation({ summary: 'Register a new user' })
   @ApiBody({ type: CreateUserDTO })
   @ApiCreatedResponse({
@@ -64,7 +64,7 @@ export class UsersController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.ADMIN)
-  @Get('profiles')
+  @Get()
   @ApiOperation({ summary: 'Get all users profiles' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -77,7 +77,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get('profile/:id')
+  @Get(':id')
   @ApiOperation({ summary: 'Get a user profile by ID' })
   @ApiParam({ name: 'id', required: true, description: 'User ID' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Success', type: User })
@@ -89,7 +89,7 @@ export class UsersController {
     return this.usersService.findOneById(id);
   }
 
-  @Put('profile/:id')
+  @Put(':id')
   @ApiOperation({ summary: 'Updates a user with specified ID' })
   @ApiParam({ name: 'id', required: true, description: 'User identifier' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Success', type: User })
@@ -104,7 +104,7 @@ export class UsersController {
     return this.usersService.update(id, user);
   }
 
-  @Patch('profile/:id')
+  @Patch(':id')
   @ApiOperation({ summary: 'Updates properties of user with  specified ID' })
   @ApiParam({ name: 'id', required: true, description: 'User identifier' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Success', type: User })
@@ -121,7 +121,7 @@ export class UsersController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleEnum.ADMIN)
-  @Delete('profile/:id')
+  @Delete(':id')
   @ApiOperation({ summary: 'Delete a user with specified ID' })
   @ApiParam({ name: 'id', required: true, description: 'User identifier' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Not found' })
