@@ -33,11 +33,9 @@ export class ProductsService {
   }
 
   async createProduct(productData: CreateProductDTO): Promise<Product> {
-    if (productData.categoryId) {
-      const category = await this.findCategoryById(productData.categoryId);
-      if (!category) {
-        throw new NotFoundException('Category not found');
-      }
+    const category = await this.findCategoryById(productData.categoryId);
+    if (!category) {
+      throw new NotFoundException('Category not found');
     }
     const product = this.productsRepository.create(productData);
     return this.productsRepository.save(product);
