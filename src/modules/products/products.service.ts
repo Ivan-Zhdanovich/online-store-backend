@@ -20,6 +20,43 @@ export class ProductsService {
     private readonly subcategoriesRepository: SubcategoriesRepository,
   ) {}
 
+  async searchProducts(query: string): Promise<Product[]> {
+    return this.productsRepository
+      .createQueryBuilder('product')
+      .where('product.name LIKE :query', { query: `%${query}` })
+      .orWhere('product.description LIKE :query', { query: `%${query}` })
+      .getMany();
+  }
+
+  async filterProducts(
+    categoryId?: number,
+    minPrice?: number,
+    maxPrice?: number,
+  ): Promise<Product[]> {
+    let queryBuilder = this.productsRepository.createQueryBuilder('product');
+
+    if (categoryId) {
+      queryBuilder = queryBuilder.andWhere(
+        'product.category.id = :categoryId',
+        { categoryId },
+      );
+    }
+
+    if (minPrice) {
+      queryBuilder = queryBuilder.andWhere('product.price >= :minPrice', {
+        minPrice,
+      });
+    }
+
+    if (maxPrice) {
+      queryBuilder = queryBuilder.andWhere('product,price <= :maxPrice', {
+        maxPrice,
+      });
+    }
+
+    return queryBuilder.getMany();
+  }
+
   async findCategoryById(id: number): Promise<Category> {
     const category = await this.categoriesRepository.findOne({
       where: { id: id },

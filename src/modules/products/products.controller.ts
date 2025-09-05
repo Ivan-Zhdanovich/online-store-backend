@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
@@ -36,6 +37,20 @@ import { UpdateSubcategoryDTO } from './dto/update-subcategory/update-subcategor
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
+
+  @Get('search')
+  searchProducts(@Query('query') query: string) {
+    return this.productsService.searchProducts(query);
+  }
+
+  @Get('filter')
+  filterProducts(
+    @Query('categoryId') categoryId?: number,
+    @Query('minPrice') minPrice?: number,
+    @Query('maxPrice') maxPrice?: number,
+  ) {
+    return this.productsService.filterProducts(categoryId, minPrice, maxPrice);
+  }
 
   @Post()
   @ApiOperation({ summary: 'Create a new product' })
