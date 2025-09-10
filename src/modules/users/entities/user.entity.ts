@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { RoleEnum } from 'src/enums/role.enum';
 import { Cart } from 'src/modules/cart/entities/cart.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
+import { Review } from 'src/modules/reviews/entities/entitiy.reviews';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('Users')
@@ -31,4 +32,7 @@ export class User {
 
   @OneToMany(() => Cart, (cart) => cart.user)
   carts: Cart[];
+
+  @OneToMany(() => Review, (review) => review.user)
+  reviews: Review[];
 }
