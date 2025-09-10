@@ -9,6 +9,7 @@ import { Category } from './category.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Subcategory } from './subcategory.entity';
 import { CartItem } from 'src/modules/cart/entities/cartItem.entity';
+import { Review } from 'src/modules/reviews/entities/entitiy.reviews';
 
 @Entity('Products')
 export class Product {
@@ -40,4 +41,7 @@ export class Product {
 
   @OneToMany(() => CartItem, (cartItem) => cartItem.product)
   cartItems: CartItem[];
+
+  @OneToMany(() => Review, (review) => review.product)
+  reviews: Review[];
 }
