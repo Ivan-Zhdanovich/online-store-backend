@@ -9,8 +9,7 @@ import { Category } from './category.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Subcategory } from './subcategory.entity';
 import { CartItem } from 'src/modules/cart/entities/cartItem.entity';
-import { Review } from 'src/modules/reviews/entities/entitiy.reviews';
-import { Wishlist } from 'src/modules/wishlist/entities/wishlist.entity';
+import { Review } from 'src/modules/reviews/entities/entity.reviews';
 
 @Entity('Products')
 export class Product {
