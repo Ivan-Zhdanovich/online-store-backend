@@ -3,6 +3,7 @@ import { RoleEnum } from 'src/enums/role.enum';
 import { Cart } from 'src/modules/cart/entities/cart.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Review } from 'src/modules/reviews/entities/entitiy.reviews';
+import { Wishlist } from 'src/modules/wishlist/entities/wishlist.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('Users')
@@ -35,4 +36,7 @@ export class User {
 
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
+
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.user)
+  wishlists: Wishlist[];
 }
