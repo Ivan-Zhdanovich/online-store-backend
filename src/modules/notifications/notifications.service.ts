@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import * as Twilio from 'twilio';
 
 @Injectable()
 export class NotificationsService {
   private transporter: nodemailer.Transporter;
+  private twilioClient: Twilio.Twilio;
 
   constructor() {
     this.transporter = nodemailer.createTransport({
@@ -13,6 +15,7 @@ export class NotificationsService {
         pass: process.env.EMAIL_PASSWORD,
       },
     });
+    this.twilioClient = Twilio('ACCOUNT_SID', 'AUTH_TOKEN');
   }
 
   async sendOrderConfirmation(email: string, orderId: number) {
@@ -35,5 +38,21 @@ export class NotificationsService {
     };
 
     await this.transporter.sendMail(mailOptions);
+  }
+
+  async sendOrderConfirmationSMS(phone: string, orderId: number) {
+    await this.twilioClient.messages.create({
+      body: `Your order with ID ${orderId} has been confirmed`,
+      from: '+1234567890',
+      to: phone,
+    });
+  }
+
+  async sendShippingUpdateSMS(phone: string, orderId: number, status: string) {
+    await this.twilioClient.messages.create({
+      body: `Your order with ID ${orderId} has been confirmed.`,
+      from: '_1234567890',
+      to: phone,
+    });
   }
 }
