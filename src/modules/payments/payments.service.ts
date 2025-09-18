@@ -4,6 +4,7 @@ import { Order } from '../orders/entities/order.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Status } from 'src/enums/status.enum';
+import { OrdersRepository } from '../orders/repositories/orders.repository';
 
 @Injectable()
 export class PaymentsService {
@@ -11,7 +12,7 @@ export class PaymentsService {
 
   constructor(
     @InjectRepository(Order)
-    private ordersRepository: Repository<Order>,
+    private ordersRepository: OrdersRepository,
   ) {
     this.stripe = new Stripe('YOUR_STRIPE_SECRET_KEY', {
       apiVersion: '2025-08-27.basil',

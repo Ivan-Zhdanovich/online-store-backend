@@ -3,15 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './entities/entity.reviews';
 import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
-import { Repository } from 'typeorm';
 import { CreateReviewDTO } from './dto/create-review.dto';
 import { UpdateReviewDTO } from './dto/update-review.dto';
+import { ReviewsRepository } from './repositories/reviews.repository';
 
 @Injectable()
 export class ReviewsService {
   constructor(
     @InjectRepository(Review)
-    private reviewsRepository: Repository<Review>,
+    private reviewsRepository: ReviewsRepository,
     private usersService: UsersService,
     private productsService: ProductsService,
   ) {}
