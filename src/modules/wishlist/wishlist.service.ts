@@ -1,13 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Wishlist } from './entities/wishlist.entity';
-import { Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
+import { WishListRepository } from './repositories/wishlistRepository';
 
 @Injectable()
 export class WishlistService {
   constructor(
-    private wishlistRepository: Repository<Wishlist>,
+    private wishlistRepository: WishListRepository,
     private usersService: UsersService,
     private productsService: ProductsService,
   ) {}
