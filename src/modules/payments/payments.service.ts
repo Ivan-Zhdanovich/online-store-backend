@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Stripe } from 'stripe';
 import { Order } from '../orders/entities/order.entity';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Status } from 'src/enums/status.enum';
 import { OrdersRepository } from '../orders/repositories/orders.repository';
