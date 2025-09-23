@@ -1,7 +1,7 @@
 import { User } from 'src/modules/users/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity('Notifications')
 export class Notification {
   @PrimaryGeneratedColumn()
   id: number;

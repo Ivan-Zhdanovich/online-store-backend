@@ -60,7 +60,7 @@ export class NotificationsService {
 
   async sendShippingUpdateSMS(phone: string, orderId: number, status: string) {
     await this.twilioClient.messages.create({
-      body: `Your order with ID ${orderId} has been confirmed.`,
+      body: `Your order with ID ${orderId} is now ${status}.`,
       from: '_1234567890',
       to: phone,
     });

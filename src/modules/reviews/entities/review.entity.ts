@@ -2,7 +2,7 @@ import { Product } from 'src/modules/products/entities/product.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity('Reviews')
 export class Review {
   @PrimaryGeneratedColumn()
   id: number;
